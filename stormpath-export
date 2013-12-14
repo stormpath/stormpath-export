@@ -86,7 +86,7 @@ class StormpathExport(object):
         :param dict data: The data to write to the file, as a JSON dict.
         """
         with open(file + '.json', 'wb') as file:
-            file.write(dumps(data, indent=2, sort_keys=True))
+            file.write(dumps(data, indent=2, separators=(',', ': '), sort_keys=True))
 
     def export_applications(self):
         """Export all application data for this Stormpath account."""
