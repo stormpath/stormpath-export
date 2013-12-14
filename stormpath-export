@@ -1,0 +1,124 @@
+#!/usr/bin/env python
+"""
+stormpath-export
+~~~~~~~~~~~~~~~~
+
+Easily export your Stormpath (https://stormpath.com/) user data.
+
+Usage:
+  stormpath-export configure
+  stormpath-export [(<location> | -l <location> | --location <location>)]
+  stormpath-export (-h | --help)
+  stormpath-export --version
+
+Options:
+  -h --help  Show this screen.
+  --version  Show version.
+
+Written by Randall Degges <http://www.rdegges.com/>.
+"""
+
+
+from json import dumps, loads
+from os import chmod
+from os.path import exists, expanduser
+from sys import exit
+
+from docopt import docopt
+from stormpath.client import Client
+from stormpath.error import Error
+
+
+##### GLOBALS
+CONFIG_FILE = expanduser('~/.stormy')
+VERSION = 'stormpath-export 0.0.1'
+
+
+class StormpathExport(object):
+    """Our CLI manager."""
+
+    def __init__(self):
+        """Initialize our Stormpath client, or die tryin' >:)"""
+        if exists(CONFIG_FILE):
+            credentials = loads(open(CONFIG_FILE, 'rb').read())
+            self.client = Client(api_key={
+                'id': credentials.get('stormpath_api_key_id'),
+                'secret': credentials.get('stormpath_api_key_secret'),
+            })
+        else:
+            print 'No API credentials found!  Please run stormpath-export configure to set them up.'
+            exit(1)
+
+    def export(self, location=None):
+        """
+        Export all Stormpath data to the disk, in JSON format.
+
+        Takes an optional argument (the directory to export all data to).
+
+        :param str location: The location to backup all Stormpath data (must be
+            a folder).
+        """
+        print 'exporting data!'
+
+
+def configure():
+    """
+    Initializing stormpath-export.
+
+    This will store the user's API credentials in: ~/.stormy, and ensure the
+    API credentials specified actually work.
+    """
+    print 'Initializing `stormpath-export`...\n'
+    print "To get started, we'll need to get your Stormpath API credentials.  Don't have a Stormpath account?  Go get one!  https://stormpath.com/"
+
+    finished = False
+    while not finished:
+        api_key_id = raw_input('Enter your API Key ID: ').strip()
+        api_key_secret = raw_input('Enter your API Key Secret: ').strip()
+        if not (api_key_id or api_key_secret):
+            print '\nNot sure how to find your Stormpath API credentials?'
+            print 'Log into your Stormpath account, then visit your dashboard and use the "Manage Existing Keys" link.\n'
+            continue
+
+        # Validate the API credentials.
+        client = Client(api_key={
+            'id': api_key_id,
+            'secret': api_key_secret,
+        })
+        try:
+            client.applications
+            print '\nSuccessfully initialized stormy!'
+            print 'Your API credentials are stored in the file:', CONFIG_FILE, '\n'
+            print 'Run stormpath-export  for usage information.'
+
+            with open(CONFIG_FILE, 'wb') as stormycfg:
+                stormycfg.write(dumps({
+                    'stormpath_api_key_id': api_key_id,
+                    'stormpath_api_key_secret': api_key_secret,
+                }, indent=2, sort_keys=True))
+
+            # Make the stormy configuration file only accessible to the current
+            # user -- this makes the credentials a bit more safe.
+            chmod(CONFIG_FILE, 0600)
+
+            finished = True
+        except Error:
+            print '\nYour API credentials are not working, please verify they are correct, then try again.\n'
+
+
+def main():
+    """Handle user input, and do stuff accordingly."""
+    arguments = docopt(__doc__, version=VERSION)
+
+    # Handle the configure as a special case -- this way we won't get invalid
+    # API credential messages when we're trying to configure stormpath-export.
+    if arguments['configure']:
+        configure()
+        return
+
+    stormy = StormpathExport()
+    stormy.export(arguments['<location>'])
+
+
+if __name__ == '__main__':
+    main()
