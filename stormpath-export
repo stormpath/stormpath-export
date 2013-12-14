@@ -20,7 +20,7 @@ Written by Randall Degges <http://www.rdegges.com/>.
 
 
 from json import dumps, loads
-from os import chmod
+from os import chmod, getcwd, makedirs
 from os.path import exists, expanduser
 from sys import exit
 
@@ -49,6 +49,24 @@ class StormpathExport(object):
             print 'No API credentials found!  Please run stormpath-export configure to set them up.'
             exit(1)
 
+    def create_location(self, location):
+        """
+        Create the necessary folders to store the exported JSON data.
+
+        :param str location: The location to backup all Stormpath data (must be
+            a folder).
+        """
+        self.location = location
+
+        if not location:
+            self.location = getcwd() + '/stormpath-exports'
+            print 'No export directory specified! Creating directory:', self.location
+            makedirs(self.location)
+        else:
+            if not exists(self.location):
+                print "Location %s doesn't exist, creating it now!" % self.location
+                makedirs(self.location)
+
     def export(self, location=None):
         """
         Export all Stormpath data to the disk, in JSON format.
@@ -58,7 +76,7 @@ class StormpathExport(object):
         :param str location: The location to backup all Stormpath data (must be
             a folder).
         """
-        print 'exporting data!'
+        self.create_location(location)
 
 
 def configure():
