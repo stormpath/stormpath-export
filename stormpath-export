@@ -37,6 +37,8 @@ VERSION = 'stormpath-export 0.0.1'
 class StormpathExport(object):
     """Our CLI manager."""
 
+    EXPORTS = ['applications', 'groups']
+
     def __init__(self):
         """Initialize our Stormpath client, or die tryin' >:)"""
         if exists(CONFIG_FILE):
@@ -67,6 +69,69 @@ class StormpathExport(object):
                 print "Location %s doesn't exist, creating it now!" % self.location
                 makedirs(self.location)
 
+        # Create all sub-directories.
+        for export in self.EXPORTS:
+            export_location = self.location + '/' + export
+            if not exists(export_location):
+                print "Location %s doesn't exist, creating it now!" % export_location
+                makedirs(export_location)
+
+    def write(self, file, data):
+        """
+        Write JSON data to the specified file.
+
+        This is a simple wrapper around our file handling stuff.
+
+        :param str file: The file to write.
+        :param dict data: The data to write to the file, as a JSON dict.
+        """
+        with open(file + '.json', 'wb') as file:
+            file.write(dumps(data, indent=2, sort_keys=True))
+
+    def export_applications(self):
+        """Export all application data for this Stormpath account."""
+        print '=== Exporting all application data...'
+
+        try:
+            for application in self.client.applications:
+                print '- Exporting application:', application.name
+                self.write(
+                    '%s/applications/%s' % (self.location, application.name),
+                    {
+                        'description': application.description,
+                        'href': application.href,
+                        'name': application.name,
+                        'status': application.status,
+                    },
+                )
+        except:
+            pass
+
+        print '=== Done!\n'
+
+    def export_groups(self):
+        """Export all group data for this Stormpath account."""
+        print '=== Exporting all group data...'
+
+        try:
+            for group in self.client.groups:
+                print group
+                continue
+                print '- Exporting group:', group.name
+                self.write(
+                    '%s/groups/%s' % (self.location, group.name),
+                    {
+                        'description': group.description,
+                        'href': group.href,
+                        'name': group.name,
+                        'status': group.status,
+                    },
+                )
+        except:
+            pass
+
+        print '=== Done!\n'
+
     def export(self, location=None):
         """
         Export all Stormpath data to the disk, in JSON format.
@@ -77,6 +142,10 @@ class StormpathExport(object):
             a folder).
         """
         self.create_location(location)
+
+        # Export all Stormpath data.
+        for export_type in self.EXPORTS:
+            getattr(self, 'export_' + export_type)()
 
 
 def configure():
