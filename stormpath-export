@@ -132,6 +132,32 @@ class StormpathExport(object):
 
         print '=== Done!\n'
 
+    def export_directories(self):
+        """Export all directory data for this Stormpath account."""
+        print '=== Exporting all directory data...'
+
+        for directory in self.client.directories:
+            print '- Exporting directory:', directory.name
+
+            json = {
+                'name': directory.name,
+                'description': directory.description,
+                'href': directory.href,
+                'status': directory.status,
+                'accounts': [],
+                'groups': [],
+            }
+
+            for account in directory.accounts:
+                json['accounts'].append(account.email)
+
+            for group in directory.groups:
+                json['groups'].append(group.name)
+
+            self.write('%s/directories/%s' % (self.location, directory.name), json)
+
+        print '=== Done!\n'
+
     def export(self, location=None):
         """
         Export all Stormpath data to the disk, in JSON format.
