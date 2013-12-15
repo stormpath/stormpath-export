@@ -82,20 +82,25 @@ class StormpathExport(object):
         """Export all application data for this Stormpath account."""
         print '=== Exporting all application data...'
 
-        try:
-            for application in self.client.applications:
-                print '- Exporting application:', application.name
-                self.write(
-                    '%s/applications/%s' % (self.location, application.name),
-                    {
-                        'description': application.description,
-                        'href': application.href,
-                        'name': application.name,
-                        'status': application.status,
-                    },
-                )
-        except:
-            pass
+        for application in self.client.applications:
+            print '- Exporting application:', application.name
+
+            json = {
+                'href': application.href,
+                'name': application.name,
+                'description': application.description,
+                'status': application.status,
+                'accounts': [],
+                'groups': [],
+            }
+
+            for account in application.accounts:
+                json['accounts'].append(account.email)
+
+            for group in application.groups:
+                json['groups'].append(group)
+
+            self.write('%s/applications/%s' % (self.location, application.name), json)
 
         print '=== Done!\n'
 
