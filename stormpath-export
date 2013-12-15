@@ -51,30 +51,17 @@ class StormpathExport(object):
             print 'No API credentials found!  Please run stormpath-export configure to set them up.'
             exit(1)
 
-    def create_location(self, location):
+    def set_location(self, location):
         """
-        Create the necessary folders to store the exported JSON data.
+        Return the proper location used to export our JSON data.
 
         :param str location: The location to backup all Stormpath data (must be
             a folder).
         """
-        self.location = location
-
         if not location:
-            self.location = getcwd() + '/stormpath-exports'
-            print 'No export directory specified! Creating directory:', self.location
-            makedirs(self.location)
-        else:
-            if not exists(self.location):
-                print "Location %s doesn't exist, creating it now!" % self.location
-                makedirs(self.location)
+            location = getcwd() + '/stormpath-exports'
 
-        # Create all sub-directories.
-        for export in self.EXPORTS:
-            export_location = self.location + '/' + export
-            if not exists(export_location):
-                print "Location %s doesn't exist, creating it now!" % export_location
-                makedirs(export_location)
+        return location
 
     def write(self, file, data):
         """
@@ -85,6 +72,9 @@ class StormpathExport(object):
         :param str file: The file to write.
         :param dict data: The data to write to the file, as a JSON dict.
         """
+        if not exists(dirname(file)):
+            makedirs(dirname(file))
+
         with open(file + '.json', 'wb') as file:
             file.write(dumps(data, indent=2, separators=(',', ': '), sort_keys=True))
 
@@ -154,7 +144,7 @@ class StormpathExport(object):
             for group in directory.groups:
                 json['groups'].append(group.name)
 
-            self.write('%s/directories/%s' % (self.location, directory.name), json)
+            self.write('%s/directories/%s/meta' % (self.location, directory.name), json)
 
         print '=== Done!\n'
 
@@ -167,7 +157,7 @@ class StormpathExport(object):
         :param str location: The location to backup all Stormpath data (must be
             a folder).
         """
-        self.create_location(location)
+        self.location = self.set_location(location)
 
         # Export all Stormpath data.
         for export_type in self.EXPORTS:
