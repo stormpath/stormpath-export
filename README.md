@@ -110,7 +110,7 @@ For full usage information, run `stormpath-export -h`:
 ```console
 $ stormpath-export -h
 stormpath-export
-\~~~~~~~~~~~~~~~~
+----------------
 
 Easily export your Stormpath (https://stormpath.com/) user data.
 
