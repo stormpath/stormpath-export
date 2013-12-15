@@ -103,11 +103,27 @@ class StormpathExport(object):
         """Export all group data for this Stormpath account."""
         print '=== Exporting all group data...'
 
-        try:
-            for group in self.client.groups:
-                print group
-                continue
+        for directory in self.client.directories:
+            for group in directory.groups:
                 print '- Exporting group:', group.name
+
+                json = {
+                    'href': group.href,
+                    'name': group.name,
+                    'description': group.description,
+                    'status': group.status,
+                    #'customData': group.customData,
+                    'directory': directory.name,
+                    'accounts': [],
+                }
+
+                for account in group.accounts:
+                    json['accounts'].append(account.email)
+
+                self.write('%s/directories/%s/groups/%s' % (self.location, directory.name, group.name), json)
+
+        print '=== Done!\n'
+
                 self.write(
                     '%s/groups/%s' % (self.location, group.name),
                     {
