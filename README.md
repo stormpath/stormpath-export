@@ -108,6 +108,7 @@ directory, which will contain all your Stormpath data.
 For full usage information, run `stormpath-export -h`:
 
 ```console
+$ stormpath-export -h
 stormpath-export
 ~~~~~~~~~~~~~~~~
 
