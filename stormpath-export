@@ -21,7 +21,7 @@ Written by Randall Degges <http://www.rdegges.com/>.
 
 from json import dumps, loads
 from os import chmod, getcwd, makedirs
-from os.path import exists, expanduser
+from os.path import dirname, exists, expanduser
 from sys import exit
 
 from docopt import docopt
