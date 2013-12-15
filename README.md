@@ -27,3 +27,88 @@ data instantly!
 - Back up your user data (Stormpath has their own backups of course, but you can
   never be too safe).
 - Migrate user data out of Stormpath.
+
+
+## Installation
+
+Installing `stormpath-export` is simple -- just use
+[pip](http://www.pip-installer.org/en/latest/)!
+
+Once you have pip installed on your computer, you can run the following to
+install the latest release of `stormpath-export`:
+
+```console
+$ pip install -U stormpath-export
+```
+
+That's it :)
+
+
+## Usage
+
+Before you can export all your Stormpath data, you'll need to configure
+`stormpath-export` and give it your Stormpath API credentials.  To do this,
+simply run:
+
+```console
+$ stormpath-export configure
+```
+
+On the command line.  This will prompt you for some basic information, then
+store your credentials in the local file `~/.stormy`.
+
+Next, to run a backup job, you can run:
+
+```console
+$ stormpath-export
+```
+
+This will export all your Stormpath data and dump it into a new directory named
+`stormpath-exports`.  If you'd like to specify your own backup location, you can
+do so by adding a path -- for instance:
+
+```console
+$ stormpath-export ~/Desktop/stormpath-exports
+```
+
+When exporting your data, you should see output similar to the following:
+
+```console
+=== Exporting all application data...
+- Exporting application: Stormpath
+=== Done!
+
+=== Exporting all directory data...
+- Exporting directory: Stormpath Administrators
+- Exporting directory: testdirectory
+=== Done!
+
+=== Exporting all group data...
+- Exporting group: Administrators
+=== Done!
+
+=== Exporting all account data...
+- Exporting account: r@rdegges.com
+=== Done!
+```
+
+**NOTE**: Depending on how many applications, groups, directories, and accounts
+you have, this process may take a while.
+
+Once the process is finished, you can navigate the JSON files in the export
+directory, which will contain all your Stormpath data.
+
+
+## Help
+
+Need help?  Can't figure something out?  If you think you've found a bug, please
+open an issue on the GitHub issue tracker.
+
+Otherwise, [shoot me an email](mailto:r@rdegges.com)!
+
+
+## Changelog
+
+v0.0.1: 12-14-2013
+
+    - First super-beta release of the project. WOO.
