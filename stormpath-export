@@ -80,7 +80,7 @@ class StormpathExport(object):
 
     def export_applications(self):
         """Export all application data for this Stormpath account."""
-        print '=== Exporting all application data...'
+        print '\n=== Exporting all application data...'
 
         for application in self.client.applications:
             print '- Exporting application:', application.name
