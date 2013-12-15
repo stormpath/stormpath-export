@@ -5,6 +5,8 @@ Easily export your Stormpath user data.
 ![Box Sketch](https://github.com/rdegges/stormpath-export/raw/master/assets/box-sketch.jpg)
 
 
+## Purpose
+
 [Stormpath](http://stormpath.com/) is one of my favorite API companies.  They
 provide a scalable, simple, and secure user accounts API platform which makes
 building scalable systems simple.
