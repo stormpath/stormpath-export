@@ -37,7 +37,7 @@ VERSION = 'stormpath-export 0.0.1'
 class StormpathExport(object):
     """Our CLI manager."""
 
-    EXPORTS = ['applications', 'groups']
+    EXPORTS = ['applications', 'directories', 'groups', 'accounts']
 
     def __init__(self):
         """Initialize our Stormpath client, or die tryin' >:)"""
