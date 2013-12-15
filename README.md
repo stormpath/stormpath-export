@@ -105,6 +105,27 @@ you have, this process may take a while.
 Once the process is finished, you can navigate the JSON files in the export
 directory, which will contain all your Stormpath data.
 
+For full usage information, run `stormpath-export -h`:
+
+```console
+stormpath-export
+~~~~~~~~~~~~~~~~
+
+Easily export your Stormpath (https://stormpath.com/) user data.
+
+Usage:
+  stormpath-export configure
+  stormpath-export [(<location> | -l <location> | --location <location>)]
+  stormpath-export (-h | --help)
+  stormpath-export --version
+
+Options:
+  -h --help  Show this screen.
+  --version  Show version.
+
+Written by Randall Degges <http://www.rdegges.com/>.
+```
+
 
 ## Help
 
