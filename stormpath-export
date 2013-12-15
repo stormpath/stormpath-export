@@ -129,17 +129,32 @@ class StormpathExport(object):
 
         print '=== Done!\n'
 
-                self.write(
-                    '%s/groups/%s' % (self.location, group.name),
-                    {
-                        'description': group.description,
-                        'href': group.href,
-                        'name': group.name,
-                        'status': group.status,
-                    },
-                )
-        except:
-            pass
+    def export_accounts(self):
+        """Export all account data for this Stormpath account."""
+        print '=== Exporting all account data...'
+
+        for directory in self.client.directories:
+            for account in directory.accounts:
+                print '- Exporting account:', account.email
+
+                json = {
+                    'href': account.href,
+                    'username': account.username,
+                    'email': account.email,
+                    'fullName': account.full_name,
+                    'givenName': account.given_name,
+                    'middleName': account.middle_name,
+                    'surname': account.surname,
+                    'status': account.status,
+                    #'customData': account.customData,
+                    'groups': [],
+                    'directory': directory.name,
+                }
+
+                for group in account.groups:
+                    json['groups'].append(group.name)
+
+                self.write('%s/directories/%s/accounts/%s' % (self.location, directory.name, account.email), json)
 
         print '=== Done!\n'
 
