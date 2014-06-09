@@ -138,6 +138,12 @@ Otherwise, [shoot me an email](mailto:r@rdegges.com)!
 
 ## Changelog
 
+v0.0.2: 06-08-2014
+
+    - Fixing bug with groups.
+    - Adding support for custom data exporting.
+    - Including new Stormpath SDK.
+
 v0.0.1: 12-14-2013
 
     - First super-beta release of the project. WOO.
