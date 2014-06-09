@@ -10,7 +10,7 @@ setup(
 
     # Basic package information:
     name = 'stormpath-export',
-    version = '0.0.1',
+    version = '0.0.2',
     scripts = ('stormpath-export', ),
 
     # Packaging options:
@@ -18,7 +18,7 @@ setup(
     include_package_data = True,
 
     # Package dependencies:
-    install_requires = ['docopt>=0.6.1', 'stormpath-sdk==1.0.0.beta'],
+    install_requires = ['docopt>=0.6.1', 'stormpath==1.2.5'],
 
     # Metadata for PyPI:
     author = 'Randall Degges',
