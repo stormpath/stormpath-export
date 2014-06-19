@@ -138,6 +138,10 @@ Otherwise, [shoot me an email](mailto:r@rdegges.com)!
 
 ## Changelog
 
+v0.0.3: 06-19-2014
+
+    - Making application export include directory name for clarity.
+
 v0.0.2: 06-08-2014
 
     - Fixing bug with groups.
