@@ -95,10 +95,16 @@ class StormpathExport(object):
             }
 
             for account in application.accounts:
-                json['accounts'].append(account.email)
+                json['accounts'].append({
+                    'directory': account.directory.name,
+                    'account': account.email,
+                })
 
             for group in application.groups:
-                json['groups'].append(group.name)
+                json['groups'].append({
+                    'directory': group.directory.name,
+                    'group': group.name,
+                })
 
             self.write('%s/applications/%s' % (self.location, application.name), json)
 
