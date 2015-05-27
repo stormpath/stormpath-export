@@ -10,7 +10,7 @@ setup(
 
     # Basic package information:
     name = 'stormpath-export',
-    version = '0.0.3',
+    version = '0.0.4',
     scripts = ('stormpath-export', ),
 
     # Packaging options:
