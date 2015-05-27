@@ -138,6 +138,11 @@ Otherwise, [shoot me an email](mailto:r@rdegges.com)!
 
 ## Changelog
 
+v0.0.4: 05-27-2015
+
+    - Backing up customData for all resource types.
+    - Upgrading dependencies.
+
 v0.0.3: 06-19-2014
 
     - Making application export include directory name for clarity.
