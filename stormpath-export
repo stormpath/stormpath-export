@@ -51,6 +51,24 @@ class StormpathExport(object):
             print 'No API credentials found!  Please run stormpath-export configure to set them up.'
             exit(1)
 
+    def get_custom_data(self, resource):
+        """
+        Given a Stormpath resource, we'll extract the custom data in a JSON
+        compatible format.
+
+        Since all Stormpath resources contain custom data with two properties:
+        `created_at` and `modified_at`, we'll simply convert these timestamp
+        fields into ISO 8601 strings.
+
+        :param obj resource: The Stormpath resource object.  Account,
+            Application, Directory, etc.
+        """
+        custom_data = dict(resource.custom_data)
+        custom_data['created_at'] = custom_data['created_at'].isoformat()
+        custom_data['modified_at'] = custom_data['modified_at'].isoformat()
+
+        return custom_data
+
     def set_location(self, location):
         """
         Return the proper location used to export our JSON data.
@@ -92,6 +110,7 @@ class StormpathExport(object):
                 'status': application.status,
                 'accounts': [],
                 'groups': [],
+                'customData': self.get_custom_data(application),
             }
 
             for account in application.accounts:
@@ -123,7 +142,7 @@ class StormpathExport(object):
                     'name': group.name,
                     'description': group.description,
                     'status': group.status,
-                    'customData': dict(group.custom_data),
+                    'customData': self.get_custom_data(group),
                     'directory': directory.name,
                     'accounts': [],
                 }
@@ -152,7 +171,7 @@ class StormpathExport(object):
                     'middleName': account.middle_name,
                     'surname': account.surname,
                     'status': account.status,
-                    'customData': dict(account.custom_data),
+                    'customData': self.get_custom_data(account),
                     'groups': [],
                     'directory': directory.name,
                 }
@@ -178,6 +197,7 @@ class StormpathExport(object):
                 'status': directory.status,
                 'accounts': [],
                 'groups': [],
+                'customData': self.get_custom_data(directory),
             }
 
             for account in directory.accounts:
