@@ -27,6 +27,7 @@ from sys import exit
 from docopt import docopt
 from stormpath.client import Client
 from stormpath.error import Error
+from stormpath.resources import Directory
 
 
 ##### GLOBALS
@@ -110,6 +111,7 @@ class StormpathExport(object):
                 'status': application.status,
                 'accounts': [],
                 'groups': [],
+                'directories': [],
                 'customData': self.get_custom_data(application),
             }
 
@@ -124,6 +126,11 @@ class StormpathExport(object):
                     'directory': group.directory.name,
                     'group': group.name,
                 })
+
+            for mapping in application.account_store_mappings:
+                store = mapping.account_store
+                if isinstance(store, Directory):
+                    json['directories'].append(store.name)
 
             self.write('%s/applications/%s' % (self.location, application.name), json)
 
