@@ -138,6 +138,10 @@ Otherwise, [shoot me an email](mailto:r@rdegges.com)!
 
 ## Changelog
 
+v0.0.5 05-28-2015
+
+    - Making the application export back up directory mappings.
+
 v0.0.4: 05-27-2015
 
     - Backing up customData for all resource types.

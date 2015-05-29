@@ -32,7 +32,7 @@ from stormpath.resources import Directory
 
 ##### GLOBALS
 CONFIG_FILE = expanduser('~/.stormy')
-VERSION = 'stormpath-export 0.0.3'
+VERSION = 'stormpath-export 0.0.5'
 
 
 class StormpathExport(object):
