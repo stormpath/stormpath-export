@@ -288,8 +288,8 @@ def main():
         configure()
         return
 
-    stormy = StormpathExport()
-    stormy.export(arguments['<location>'])
+    exporter = StormpathExport()
+    exporter.export(arguments['<location>'])
 
 
 if __name__ == '__main__':
