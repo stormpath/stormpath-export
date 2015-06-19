@@ -138,6 +138,10 @@ Otherwise, [shoot me an email](mailto:r@rdegges.com)!
 
 ## Changelog
 
+v0.0.7 06-18-2015
+
+    - Supporting Account API key backups.
+
 v0.0.6 06-18-2015
 
     - Completely re-doing export structures -- much more sane now.

@@ -31,7 +31,7 @@ from stormpath.error import Error
 
 ##### GLOBALS
 CONFIG_FILE = expanduser('~/.stormy')
-VERSION = 'stormpath-export 0.0.6'
+VERSION = 'stormpath-export 0.0.7'
 
 
 class StormpathExport(object):
@@ -372,6 +372,7 @@ class StormpathExport(object):
                 'modifiedAt': account.modified_at.isoformat(),
                 'customData': self.get_custom_data(account),
                 'groups': [],
+                'apiKeys': [],
                 'directory': {
                     'id': self.get_id(account.directory),
                     'href': account.directory.href,
@@ -382,6 +383,15 @@ class StormpathExport(object):
                     'modifiedAt': account.directory.modified_at.isoformat(),
                 },
             }
+
+            for api_key in account.api_keys:
+                json['apiKeys'].append({
+                    'href': api_key.href,
+                    'id': api_key.id,
+                    'secret': api_key.secret,
+                    #'createdAt': api_key.created_at.isoformat(),
+                    #'modifiedAt': api_key.modified_at.isoformat(),
+                })
 
             for group in account.groups:
                 json['groups'].append({
