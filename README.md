@@ -138,6 +138,10 @@ Otherwise, [shoot me an email](mailto:r@rdegges.com)!
 
 ## Changelog
 
+v0.0.9: 06-19-2015
+
+    - Supporting private URLs in the configure script.
+
 v0.0.8: 06-19-2015
 
     - Supporting private deployments.

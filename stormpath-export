@@ -32,7 +32,7 @@ from stormpath.error import Error
 
 ##### GLOBALS
 CONFIG_FILE = expanduser('~/.stormy')
-VERSION = 'stormpath-export 0.0.8'
+VERSION = 'stormpath-export 0.0.9'
 
 
 class StormpathExport(object):
@@ -481,7 +481,7 @@ class StormpathExport(object):
             getattr(self, 'export_' + export_type)()
 
 
-def configure():
+def configure(base_url=None):
     """
     Initializing stormpath-export.
 
@@ -504,7 +504,7 @@ def configure():
         client = Client(api_key={
             'id': api_key_id,
             'secret': api_key_secret,
-        })
+        }, base_url=base_url or None)
         try:
             client.applications
             print '\nSuccessfully initialized stormy!'
@@ -533,7 +533,7 @@ def main():
     # Handle the configure as a special case -- this way we won't get invalid
     # API credential messages when we're trying to configure stormpath-export.
     if arguments['configure']:
-        configure()
+        configure(base_url=arguments['<base_url>'])
         return
 
     exporter = StormpathExport(base_url=arguments['<base_url>'])
