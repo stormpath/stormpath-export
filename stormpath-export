@@ -8,6 +8,7 @@ Easily export your Stormpath (https://stormpath.com/) user data.
 Usage:
   stormpath-export configure
   stormpath-export [(<location> | -l <location> | --location <location>)]
+  stormpath-export [(-b <base_url> | --base-url <base_url>)]
   stormpath-export (-h | --help)
   stormpath-export --version
 
@@ -39,14 +40,14 @@ class StormpathExport(object):
 
     EXPORTS = ['tenants', 'applications', 'directories', 'groups', 'accounts']
 
-    def __init__(self):
+    def __init__(self, base_url=None):
         """Initialize our Stormpath client, or die tryin' >:)"""
         if exists(CONFIG_FILE):
             credentials = loads(open(CONFIG_FILE, 'rb').read())
             self.client = Client(api_key={
                 'id': credentials.get('stormpath_api_key_id'),
                 'secret': credentials.get('stormpath_api_key_secret'),
-            })
+            }, base_url=base_url or None)
         else:
             print 'No API credentials found!  Please run stormpath-export configure to set them up.'
             exit(1)
@@ -535,7 +536,7 @@ def main():
         configure()
         return
 
-    exporter = StormpathExport()
+    exporter = StormpathExport(base_url=arguments['<base_url>'])
     exporter.export(arguments['<location>'])
 
 
