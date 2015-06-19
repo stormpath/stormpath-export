@@ -138,6 +138,12 @@ Otherwise, [shoot me an email](mailto:r@rdegges.com)!
 
 ## Changelog
 
+v0.0.6 06-18-2015
+
+    - Completely re-doing export structures -- much more sane now.
+    - Adding IDs, hrefs, and all fields to all backups.
+    - Still needs to support Social / ID site / Verification templates.
+
 v0.0.5 05-28-2015
 
     - Making the application export back up directory mappings.

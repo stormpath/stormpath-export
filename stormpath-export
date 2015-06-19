@@ -27,18 +27,17 @@ from sys import exit
 from docopt import docopt
 from stormpath.client import Client
 from stormpath.error import Error
-from stormpath.resources import Directory
 
 
 ##### GLOBALS
 CONFIG_FILE = expanduser('~/.stormy')
-VERSION = 'stormpath-export 0.0.5'
+VERSION = 'stormpath-export 0.0.6'
 
 
 class StormpathExport(object):
     """Our CLI manager."""
 
-    EXPORTS = ['applications', 'directories', 'groups', 'accounts']
+    EXPORTS = ['tenants', 'applications', 'directories', 'groups', 'accounts']
 
     def __init__(self):
         """Initialize our Stormpath client, or die tryin' >:)"""
@@ -64,11 +63,30 @@ class StormpathExport(object):
         :param obj resource: The Stormpath resource object.  Account,
             Application, Directory, etc.
         """
-        custom_data = dict(resource.custom_data)
-        custom_data['created_at'] = custom_data['created_at'].isoformat()
-        custom_data['modified_at'] = custom_data['modified_at'].isoformat()
+        try:
+            custom_data = dict(resource.custom_data)
+        except AttributeError:
+            custom_data = dict(resource['custom_data'])
+
+        custom_data['createdAt'] = custom_data['created_at'].isoformat()
+        custom_data['modifiedAt'] = custom_data['modified_at'].isoformat()
+
+        del custom_data['created_at']
+        del custom_data['modified_at']
 
         return custom_data
+
+    def get_id(self, resource):
+        """
+        Given a Stormpath Resource, we'll extract the resource ID.
+
+        :param obj resource: The Stormpath resource object.  Account,
+            Application, Directory, etc.
+        """
+        try:
+            return resource.href.split('/')[-1]
+        except AttributeError:
+            return resource['href'].split('/')[-1]
 
     def set_location(self, location):
         """
@@ -97,6 +115,30 @@ class StormpathExport(object):
         with open(file + '.json', 'wb') as file:
             file.write(dumps(data, indent=2, separators=(',', ': '), sort_keys=True))
 
+    def export_tenants(self):
+        """Export all tenant data for this Stormpath account."""
+        print '\n=== Exporting all tenant data...'
+
+        tenant = dict(self.client.tenant)
+
+        print '- Exporting tenant:', tenant['name']
+
+        json = {
+            'id': self.get_id(tenant),
+            'href': tenant['href'],
+            'name': tenant['name'],
+            'key': tenant['key'],
+            'createdAt': tenant['created_at'].isoformat(),
+            'modifiedAt': tenant['modified_at'].isoformat(),
+            'customData': self.get_custom_data(tenant),
+        }
+
+        #for application in tenant.applications:
+
+        self.write('%s/%s/meta' % (self.location, json['id']), json)
+
+        print '=== Done!\n'
+
     def export_applications(self):
         """Export all application data for this Stormpath account."""
         print '\n=== Exporting all application data...'
@@ -105,88 +147,60 @@ class StormpathExport(object):
             print '- Exporting application:', application.name
 
             json = {
+                'id': self.get_id(application),
                 'href': application.href,
                 'name': application.name,
                 'description': application.description,
                 'status': application.status,
-                'accounts': [],
-                'groups': [],
-                'directories': [],
+                'createdAt': application.created_at.isoformat(),
+                'modifiedAt': application.modified_at.isoformat(),
                 'customData': self.get_custom_data(application),
+                'default_account_store_mapping': None,
+                'default_group_store_mapping': None,
+                'account_store_mappings': [],
+                #'verificationEmails': [],
             }
 
-            for account in application.accounts:
-                json['accounts'].append({
-                    'directory': account.directory.name,
-                    'account': account.email,
-                })
+            default_account_store_mapping = application.default_account_store_mapping
+            default_group_store_mapping = application.default_group_store_mapping
 
-            for group in application.groups:
-                json['groups'].append({
-                    'directory': group.directory.name,
-                    'group': group.name,
-                })
-
-            for mapping in application.account_store_mappings:
-                store = mapping.account_store
-                if isinstance(store, Directory):
-                    json['directories'].append(store.name)
-
-            self.write('%s/applications/%s' % (self.location, application.name), json)
-
-        print '=== Done!\n'
-
-    def export_groups(self):
-        """Export all group data for this Stormpath account."""
-        print '=== Exporting all group data...'
-
-        for directory in self.client.directories:
-            for group in directory.groups:
-                print '- Exporting group:', group.name
-
-                json = {
-                    'href': group.href,
-                    'name': group.name,
-                    'description': group.description,
-                    'status': group.status,
-                    'customData': self.get_custom_data(group),
-                    'directory': directory.name,
-                    'accounts': [],
+            if default_account_store_mapping:
+                json['default_account_store_mapping'] = {
+                    'id': application.default_account_store_mapping.href.split('/')[-1],
+                    'href': application.default_account_store_mapping.href,
+                    'type': application.default_account_store_mapping.account_store.__class__.__name__,
+                    'name': application.default_account_store_mapping.account_store.name,
+                    'list_index': application.default_account_store_mapping.list_index,
                 }
 
-                for account in group.accounts:
-                    json['accounts'].append(account.email)
-
-                self.write('%s/directories/%s/groups/%s' % (self.location, directory.name, group.name), json)
-
-        print '=== Done!\n'
-
-    def export_accounts(self):
-        """Export all account data for this Stormpath account."""
-        print '=== Exporting all account data...'
-
-        for directory in self.client.directories:
-            for account in directory.accounts:
-                print '- Exporting account:', account.email
-
-                json = {
-                    'href': account.href,
-                    'username': account.username,
-                    'email': account.email,
-                    'fullName': account.full_name,
-                    'givenName': account.given_name,
-                    'middleName': account.middle_name,
-                    'surname': account.surname,
-                    'status': account.status,
-                    'customData': self.get_custom_data(account),
-                    'groups': [],
-                    'directory': directory.name,
+            if default_group_store_mapping:
+                json['default_group_store_mapping'] = {
+                    'id': application.default_group_store_mapping.href.split('/')[-1],
+                    'href': application.default_group_store_mapping.href,
+                    'type': application.default_group_store_mapping.account_store.__class__.__name__,
+                    'name': application.default_group_store_mapping.account_store.name,
+                    'list_index': application.default_group_store_mapping.list_index,
                 }
 
-                for group in account.groups:
-                    json['groups'].append(group.name)
+            for account_store_mapping in application.account_store_mappings:
+                json['account_store_mappings'].append({
+                    'id': self.get_id(account_store_mapping),
+                    'href': account_store_mapping.href,
+                    'account_store': {
+                        'type': account_store_mapping.account_store.__class__.__name__,
+                        'id': self.get_id(account_store_mapping.account_store),
+                        'href': account_store_mapping.account_store.href,
+                        'name': account_store_mapping.account_store.name,
+                        'description': account_store_mapping.account_store.description,
+                        'status': account_store_mapping.account_store.status,
+                    },
+                    'list_index': account_store_mapping.list_index,
+                    'is_default_account_store': account_store_mapping.is_default_account_store,
+                    'is_default_group_store': account_store_mapping.is_default_group_store,
+                })
 
-                self.write('%s/directories/%s/accounts/%s' % (self.location, directory.name, account.email), json)
+            tenant = self.get_id(application.tenant)
+            self.write('%s/%s/applications/%s' % (self.location, tenant, json['id']), json)
 
         print '=== Done!\n'
 
@@ -198,22 +212,190 @@ class StormpathExport(object):
             print '- Exporting directory:', directory.name
 
             json = {
+                'id': self.get_id(directory),
+                'href': directory.href,
                 'name': directory.name,
                 'description': directory.description,
-                'href': directory.href,
                 'status': directory.status,
-                'accounts': [],
-                'groups': [],
+                'createdAt': directory.created_at.isoformat(),
+                'modifiedAt': directory.modified_at.isoformat(),
                 'customData': self.get_custom_data(directory),
+                'groups': [],
             }
 
-            for account in directory.accounts:
-                json['accounts'].append(account.email)
-
             for group in directory.groups:
-                json['groups'].append(group.name)
+                json['groups'].append({
+                    'id': self.get_id(group),
+                    'href': group.href,
+                    'name': group.name,
+                    'description': group.description,
+                    'status': group.status,
+                    'createdAt': group.created_at.isoformat(),
+                    'modifiedAt': group.modified_at.isoformat(),
+                })
 
-            self.write('%s/directories/%s/meta' % (self.location, directory.name), json)
+            json['provider'] = {
+                'id': directory.provider.provider_id,
+                'href': directory.provider.href,
+                'createdAt': directory.provider.created_at.isoformat(),
+                'modifiedAt': directory.provider.modified_at.isoformat(),
+            }
+
+            json['passwordPolicy'] = {
+                'id': self.get_id(directory.password_policy),
+                'href': directory.password_policy.href,
+                #'createdAt': directory.password_policy.created_at.isoformat(),
+                #'modifiedAt': directory.password_policy.modified_at.isoformat(),
+                'resetEmailStatus': directory.password_policy.reset_email_status,
+                'resetEmailTemplates': [],
+                'resetSuccessEmailStatus': directory.password_policy.reset_success_email_status,
+                'resetSuccessEmailTemplates': [],
+                'resetTokenTtl': directory.password_policy.reset_token_ttl,
+                'strength': {
+                    'href': directory.password_policy.strength.href,
+                    #'createdAt': directory.password_policy.strength.created_at.isoformat(),
+                    #'modifiedAt': directory.password_policy.strength.modified_at.isoformat(),
+                    'maxLength': directory.password_policy.strength.max_length,
+                    'minDiacritic': directory.password_policy.strength.min_diacritic,
+                    'minLength': directory.password_policy.strength.min_length,
+                    'minLowerCase': directory.password_policy.strength.min_lower_case,
+                    'minNumeric': directory.password_policy.strength.min_numeric,
+                    'minSymbol': directory.password_policy.strength.min_symbol,
+                    'minUpperCase': directory.password_policy.strength.min_upper_case,
+                },
+            }
+
+            for template in directory.password_policy.reset_email_templates:
+                json['passwordPolicy']['resetEmailTemplates'].append({
+                    'id': self.get_id(template),
+                    'href': template.href,
+                    #'createdAt': template.created_at.isoformat(),
+                    #'modifiedAt': template.modified_at.isoformat(),
+                    'fromName': template.from_name,
+                    'name': template.name,
+                    'description': template.description,
+                    'fromEmailAddress': template.from_email_address,
+                    'textBody': template.text_body,
+                    'htmlBody': template.html_body,
+                    'defaultModel': template.default_model,
+                    'mimeType': template.mime_type,
+                    'subject': template.subject,
+                })
+
+            for template in directory.password_policy.reset_success_email_templates:
+                json['passwordPolicy']['resetSuccessEmailTemplates'].append({
+                    'id': self.get_id(template),
+                    'href': template.href,
+                    #'createdAt': template.created_at.isoformat(),
+                    #'modifiedAt': template.modified_at.isoformat(),
+                    'fromName': template.from_name,
+                    'name': template.name,
+                    'description': template.description,
+                    'fromEmailAddress': template.from_email_address,
+                    'textBody': template.text_body,
+                    'htmlBody': template.html_body,
+                    'mimeType': template.mime_type,
+                    'subject': template.subject,
+                })
+
+            tenant = self.get_id(directory.tenant)
+            self.write('%s/%s/directories/%s' % (self.location, tenant, json['id']), json)
+
+        print '=== Done!\n'
+
+    def export_groups(self):
+        """Export all group data for this Stormpath account."""
+        print '=== Exporting all group data...'
+
+        for group in self.client.tenant.groups:
+            print '- Exporting group:', group.name
+
+            json = {
+                'id': self.get_id(group),
+                'href': group.href,
+                'name': group.name,
+                'description': group.description,
+                'status': group.status,
+                'createdAt': group.created_at.isoformat(),
+                'modifiedAt': group.modified_at.isoformat(),
+                'customData': self.get_custom_data(group),
+                'directory': {
+                    'id': self.get_id(group.directory),
+                    'href': group.directory.href,
+                    'name': group.directory.name,
+                    'description': group.directory.description,
+                    'status': group.directory.status,
+                    'createdAt': group.directory.created_at.isoformat(),
+                    'modifiedAt': group.directory.modified_at.isoformat(),
+                },
+                'accounts': [],
+            }
+
+            for account in group.accounts:
+                json['accounts'].append({
+                    'id': self.get_id(account),
+                    'href': account.href,
+                    'username': account.username,
+                    'email': account.email,
+                    'fullName': account.full_name,
+                    'givenName': account.given_name,
+                    'middleName': account.middle_name,
+                    'surname': account.surname,
+                    'status': account.status,
+                    'createdAt': account.created_at.isoformat(),
+                    'modifiedAt': account.modified_at.isoformat(),
+                })
+
+            tenant = self.get_id(self.client.tenant)
+            self.write('%s/%s/groups/%s' % (self.location, tenant, json['id']), json)
+
+        print '=== Done!\n'
+
+    def export_accounts(self):
+        """Export all account data for this Stormpath account."""
+        print '=== Exporting all account data...'
+
+        for account in self.client.tenant.accounts:
+            print '- Exporting account:', account.email
+
+            json = {
+                'id': self.get_id(account),
+                'href': account.href,
+                'username': account.username,
+                'email': account.email,
+                'fullName': account.full_name,
+                'givenName': account.given_name,
+                'middleName': account.middle_name,
+                'surname': account.surname,
+                'status': account.status,
+                'createdAt': account.created_at.isoformat(),
+                'modifiedAt': account.modified_at.isoformat(),
+                'customData': self.get_custom_data(account),
+                'groups': [],
+                'directory': {
+                    'id': self.get_id(account.directory),
+                    'href': account.directory.href,
+                    'name': account.directory.name,
+                    'description': account.directory.description,
+                    'status': account.directory.status,
+                    'createdAt': account.directory.created_at.isoformat(),
+                    'modifiedAt': account.directory.modified_at.isoformat(),
+                },
+            }
+
+            for group in account.groups:
+                json['groups'].append({
+                    'id': self.get_id(group),
+                    'href': group.href,
+                    'name': group.name,
+                    'description': group.description,
+                    'status': group.status,
+                    'createdAt': group.created_at.isoformat(),
+                    'modifiedAt': group.modified_at.isoformat(),
+                })
+
+            tenant = self.get_id(self.client.tenant)
+            self.write('%s/%s/accounts/%s' % (self.location, tenant, json['id']), json)
 
         print '=== Done!\n'
 
