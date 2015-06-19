@@ -235,68 +235,123 @@ class StormpathExport(object):
                 })
 
             json['provider'] = {
-                'id': directory.provider.provider_id,
                 'href': directory.provider.href,
-                'createdAt': directory.provider.created_at.isoformat(),
-                'modifiedAt': directory.provider.modified_at.isoformat(),
+                'providerId': directory.provider.provider_id,
+                'agent': None,
             }
 
-            json['passwordPolicy'] = {
-                'id': self.get_id(directory.password_policy),
-                'href': directory.password_policy.href,
-                #'createdAt': directory.password_policy.created_at.isoformat(),
-                #'modifiedAt': directory.password_policy.modified_at.isoformat(),
-                'resetEmailStatus': directory.password_policy.reset_email_status,
-                'resetEmailTemplates': [],
-                'resetSuccessEmailStatus': directory.password_policy.reset_success_email_status,
-                'resetSuccessEmailTemplates': [],
-                'resetTokenTtl': directory.password_policy.reset_token_ttl,
-                'strength': {
-                    'href': directory.password_policy.strength.href,
-                    #'createdAt': directory.password_policy.strength.created_at.isoformat(),
-                    #'modifiedAt': directory.password_policy.strength.modified_at.isoformat(),
-                    'maxLength': directory.password_policy.strength.max_length,
-                    'minDiacritic': directory.password_policy.strength.min_diacritic,
-                    'minLength': directory.password_policy.strength.min_length,
-                    'minLowerCase': directory.password_policy.strength.min_lower_case,
-                    'minNumeric': directory.password_policy.strength.min_numeric,
-                    'minSymbol': directory.password_policy.strength.min_symbol,
-                    'minUpperCase': directory.password_policy.strength.min_upper_case,
-                },
-            }
+            try:
+                json['provider']['createdAt'] = directory.provider.created_at.isoformat()
+                json['provider']['modifiedAt'] = directory.provider.modified_at.isoformat()
+            except AttributeError:
+                json['provider']['createdAt'] = None
+                json['provider']['modifiedAt'] = None
 
-            for template in directory.password_policy.reset_email_templates:
-                json['passwordPolicy']['resetEmailTemplates'].append({
-                    'id': self.get_id(template),
-                    'href': template.href,
-                    #'createdAt': template.created_at.isoformat(),
-                    #'modifiedAt': template.modified_at.isoformat(),
-                    'fromName': template.from_name,
-                    'name': template.name,
-                    'description': template.description,
-                    'fromEmailAddress': template.from_email_address,
-                    'textBody': template.text_body,
-                    'htmlBody': template.html_body,
-                    'defaultModel': template.default_model,
-                    'mimeType': template.mime_type,
-                    'subject': template.subject,
-                })
+            try:
+                json['provider']['clientId'] = directory.provider.client_id
+            except AttributeError:
+                json['provider']['clientId'] = None
 
-            for template in directory.password_policy.reset_success_email_templates:
-                json['passwordPolicy']['resetSuccessEmailTemplates'].append({
-                    'id': self.get_id(template),
-                    'href': template.href,
-                    #'createdAt': template.created_at.isoformat(),
-                    #'modifiedAt': template.modified_at.isoformat(),
-                    'fromName': template.from_name,
-                    'name': template.name,
-                    'description': template.description,
-                    'fromEmailAddress': template.from_email_address,
-                    'textBody': template.text_body,
-                    'htmlBody': template.html_body,
-                    'mimeType': template.mime_type,
-                    'subject': template.subject,
-                })
+            try:
+                json['provider']['clientSecret'] = directory.provider.client_secret
+            except AttributeError:
+                json['provider']['clientSecret'] = None
+
+            try:
+                json['provider']['redirectUri'] = directory.provider.redirect_uri
+            except AttributeError:
+                json['provider']['redirectUri'] = None
+
+            try:
+                json['provider']['agent'] = {
+                    'id': self.get_id(directory.provider.agent),
+                    'href': directory.provider.agent.href,
+                    'status': directory.provider.agent.status,
+                    'createdAt': directory.provider.agent.created_at.isoformat(),
+                    'modifiedAt': directory.provider.agent.modified_at.isoformat(),
+                    'config': {
+                        'directoryHost': directory.provider.agent.directory_host,
+                        'directoryPort': directory.provider.agent.directory_port,
+                        'sslRequired': directory.provider.agent.ssl_required,
+                        'agentUserDn': directory.provider.agent.agent_user_dn,
+                        'agentUserDnPassword': directory.provider.agent.agent_user_dn_password,
+                        'baseDn': directory.provider.agent.base_dn,
+                        'pollInterval': directory.provider.agent.poll_interval,
+                        'referralMode': directory.provider.agent.referral_mode,
+                        'ignoreReferralIssues': directory.provider.agent.ignore_referral_issues,
+                        'accountConfig': directory.provider.agent.account_config,
+                        'groupConfig': directory.provider.agent.group_config,
+                    },
+                    'download': {
+
+                    },
+                }
+            except AttributeError:
+                pass
+
+            if directory.password_policy:
+                json['passwordPolicy'] = {
+                    'id': self.get_id(directory.password_policy),
+                    'href': directory.password_policy.href,
+                    #'createdAt': directory.password_policy.created_at.isoformat(),
+                    #'modifiedAt': directory.password_policy.modified_at.isoformat(),
+                    'resetEmailStatus': directory.password_policy.reset_email_status,
+                    'resetEmailTemplates': [],
+                    'resetSuccessEmailStatus': directory.password_policy.reset_success_email_status,
+                    'resetSuccessEmailTemplates': [],
+                    'resetTokenTtl': directory.password_policy.reset_token_ttl,
+                    'strength': {
+                        'href': directory.password_policy.strength.href,
+                        #'createdAt': directory.password_policy.strength.created_at.isoformat(),
+                        #'modifiedAt': directory.password_policy.strength.modified_at.isoformat(),
+                        'maxLength': directory.password_policy.strength.max_length,
+                        'minDiacritic': directory.password_policy.strength.min_diacritic,
+                        'minLength': directory.password_policy.strength.min_length,
+                        'minLowerCase': directory.password_policy.strength.min_lower_case,
+                        'minNumeric': directory.password_policy.strength.min_numeric,
+                        'minSymbol': directory.password_policy.strength.min_symbol,
+                        'minUpperCase': directory.password_policy.strength.min_upper_case,
+                    },
+                }
+
+            try:
+                for template in directory.password_policy.reset_email_templates:
+                    json['passwordPolicy']['resetEmailTemplates'].append({
+                        'id': self.get_id(template),
+                        'href': template.href,
+                        #'createdAt': template.created_at.isoformat(),
+                        #'modifiedAt': template.modified_at.isoformat(),
+                        'fromName': template.from_name,
+                        'name': template.name,
+                        'description': template.description,
+                        'fromEmailAddress': template.from_email_address,
+                        'textBody': template.text_body,
+                        'htmlBody': template.html_body,
+                        'defaultModel': template.default_model,
+                        'mimeType': template.mime_type,
+                        'subject': template.subject,
+                    })
+            except AttributeError:
+                pass
+
+            try:
+                for template in directory.password_policy.reset_success_email_templates:
+                    json['passwordPolicy']['resetSuccessEmailTemplates'].append({
+                        'id': self.get_id(template),
+                        'href': template.href,
+                        #'createdAt': template.created_at.isoformat(),
+                        #'modifiedAt': template.modified_at.isoformat(),
+                        'fromName': template.from_name,
+                        'name': template.name,
+                        'description': template.description,
+                        'fromEmailAddress': template.from_email_address,
+                        'textBody': template.text_body,
+                        'htmlBody': template.html_body,
+                        'mimeType': template.mime_type,
+                        'subject': template.subject,
+                    })
+            except AttributeError:
+                pass
 
             tenant = self.get_id(directory.tenant)
             self.write('%s/%s/directories/%s' % (self.location, tenant, json['id']), json)
