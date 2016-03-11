@@ -38,7 +38,7 @@ VERSION = 'stormpath-export 0.0.8'
 class StormpathExport(object):
     """Our CLI manager."""
 
-    EXPORTS = ['tenants', 'applications', 'directories', 'groups', 'accounts']
+    EXPORTS = ['tenants', 'applications', 'directories', 'groups', 'organizations', 'accounts']
 
     def __init__(self, base_url=None):
         """Initialize our Stormpath client, or die tryin' >:)"""
@@ -356,6 +356,71 @@ class StormpathExport(object):
 
             tenant = self.get_id(directory.tenant)
             self.write('%s/%s/directories/%s' % (self.location, tenant, json['id']), json)
+
+        print '=== Done!\n'
+
+    def export_organizations(self):
+        """Export all organization data for this Stormpath account."""
+        print '\n=== Exporting all organization data...'
+
+        for organization in self.client.organizations:
+            print '- Exporting organizations:', organization.name
+
+            json = {
+                'id': self.get_id(organization),
+                'href': organization.href,
+                'name': organization.name,
+                'nameKey': organization.name_key,
+                'description': organization.description,
+                'status': organization.status,
+                'createdAt': organization.created_at.isoformat(),
+                'modifiedAt': organization.modified_at.isoformat(),
+                'customData': self.get_custom_data(organization),
+                'default_account_store_mapping': None,
+                'default_group_store_mapping': None,
+                'account_store_mappings': [],
+            }
+
+            default_account_store_mapping = organization.default_account_store_mapping
+            default_group_store_mapping = organization.default_group_store_mapping
+
+            if default_account_store_mapping:
+                json['default_account_store_mapping'] = {
+                    'id': organization.default_account_store_mapping.href.split('/')[-1],
+                    'href': organization.default_account_store_mapping.href,
+                    'type': organization.default_account_store_mapping.account_store.__class__.__name__,
+                    'name': organization.default_account_store_mapping.account_store.name,
+                    'list_index': organization.default_account_store_mapping.list_index,
+                }
+
+            if default_group_store_mapping:
+                json['default_group_store_mapping'] = {
+                    'id': organization.default_group_store_mapping.href.split('/')[-1],
+                    'href': organization.default_group_store_mapping.href,
+                    'type': organization.default_group_store_mapping.account_store.__class__.__name__,
+                    'name': organization.default_group_store_mapping.account_store.name,
+                    'list_index': organization.default_group_store_mapping.list_index,
+                }
+
+            for account_store_mapping in organization.account_store_mappings:
+                json['account_store_mappings'].append({
+                    'id': self.get_id(account_store_mapping),
+                    'href': account_store_mapping.href,
+                    'account_store': {
+                        'type': account_store_mapping.account_store.__class__.__name__,
+                        'id': self.get_id(account_store_mapping.account_store),
+                        'href': account_store_mapping.account_store.href,
+                        'name': account_store_mapping.account_store.name,
+                        'description': account_store_mapping.account_store.description,
+                        'status': account_store_mapping.account_store.status,
+                    },
+                    'list_index': account_store_mapping.list_index,
+                    'is_default_account_store': account_store_mapping.is_default_account_store,
+                    'is_default_group_store': account_store_mapping.is_default_group_store,
+                })
+
+            tenant = self.get_id(organization.tenant)
+            self.write('%s/%s/organizations/%s' % (self.location, tenant, json['id']), json)
 
         print '=== Done!\n'
 
