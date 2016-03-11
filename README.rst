@@ -145,40 +145,40 @@ Otherwise, `shoot us an email`_.
 Changelog
 ---------
 
-**Version 0.0.8**: 06-19-2015
+**0.0.8**: 06-19-2015
 
 - Supporting private deployments.
 
-**Version 0.0.7**: 06-18-2015
+**0.0.7**: 06-18-2015
 
 - Supporting Account API key backups.
 
-**Version 0.0.6**: 06-18-2015
+**0.0.6**: 06-18-2015
 
 - Completely re-doing export structures -- much more sane now.
 - Adding IDs, hrefs, and all fields to all backups.
 - Still needs to support Social / ID site / Verification templates.
 
-**Version 0.0.5**: 05-28-2015
+**0.0.5**: 05-28-2015
 
 - Making the application export back up directory mappings.
 
-**Version 0.0.4**: 05-27-2015
+**0.0.4**: 05-27-2015
 
 - Backing up customData for all resource types.
 - Upgrading dependencies.
 
-**Version 0.0.3**: 06-19-2014
+**0.0.3**: 06-19-2014
 
 - Making application export include directory name for clarity.
 
-**Version 0.0.2**: 06-08-2014
+**0.0.2**: 06-08-2014
 
 - Fixing bug with groups.
 - Adding support for custom data exporting.
 - Including new Stormpath SDK.
 
-**Version 0.0.1**: 12-14-2013
+**0.0.1**: 12-14-2013
 
 - First super-beta release of the project. WOO.
 
