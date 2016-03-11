@@ -12,6 +12,10 @@ Easily export your Stormpath user data.
     :alt: stormpath-export Downloads
     :target: https://pypi.python.org/pypi/stormpath-export
 
+.. image:: https://api.codacy.com/project/badge/grade/d7904abc80dc40a39e8b1850f10000ea
+    :alt: stormpath-export Code Quality
+    :target: https://www.codacy.com/app/r/stormpath-export
+
 .. image:: https://img.shields.io/travis/stormpath/stormpath-export.svg
     :alt: stormpath-export Build
     :target: https://travis-ci.org/stormpath/stormpath-export
