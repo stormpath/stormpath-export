@@ -320,8 +320,8 @@ class StormpathExport(object):
                     json['passwordPolicy']['resetEmailTemplates'].append({
                         'id': self.get_id(template),
                         'href': template.href,
-                        #'createdAt': template.created_at.isoformat(),
-                        #'modifiedAt': template.modified_at.isoformat(),
+                        'createdAt': template.created_at.isoformat(),
+                        'modifiedAt': template.modified_at.isoformat(),
                         'fromName': template.from_name,
                         'name': template.name,
                         'description': template.description,
