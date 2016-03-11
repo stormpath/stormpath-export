@@ -3,6 +3,19 @@ stormpath-export
 
 Easily export your Stormpath user data.
 
+
+.. image:: https://img.shields.io/pypi/v/stormpath-export.svg
+    :alt: stormpath-export Release
+    :target: https://pypi.python.org/pypi/stormpath-export
+
+.. image:: https://img.shields.io/pypi/dm/stormpath-export.svg
+    :alt: stormpath-export Downloads
+    :target: https://pypi.python.org/pypi/stormpath-export
+
+.. image:: https://img.shields.io/travis/stormpath/stormpath-export.svg
+    :alt: stormpath-export Build
+    :target: https://travis-ci.org/stormpath/stormpath-export
+
 .. image:: https://github.com/rdegges/stormpath-export/raw/master/assets/box-sketch.jpg
     :alt: Box Sketch
 
