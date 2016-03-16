@@ -32,7 +32,7 @@ from stormpath.error import Error
 
 ##### GLOBALS
 CONFIG_FILE = expanduser('~/.stormy')
-VERSION = 'stormpath-export 0.0.9'
+VERSION = 'stormpath-export 0.1.0'
 
 
 class StormpathExport(object):
