@@ -162,12 +162,16 @@ Otherwise, `shoot us an email`_.
 Changelog
 ---------
 
-**0.0.9**: 03-16-2016
+**0.1.0**: 03-16-2016
 
 - Supporting API key exports.
 - Supporting Organization exports.
 - Fixing documentation.
 - Updating Stormpath dependency.
+
+**0.0.9**: 06-19-2015
+
+- Fixing version information.
 
 **0.0.8**: 06-19-2015
 
