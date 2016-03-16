@@ -28,6 +28,6 @@ setup(
     keywords = 'user authentication auth security api stormpath bcrypt utility',
     description = 'Easily export your Stormpath user data.',
     long_description = open(normpath(join(dirname(abspath(__file__)),
-        'README.md'))).read()
+        'README.rst'))).read()
 
 )
