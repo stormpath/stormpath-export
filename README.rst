@@ -20,7 +20,7 @@ Easily export your Stormpath user data.
     :alt: stormpath-export Build
     :target: https://travis-ci.org/stormpath/stormpath-export
 
-.. image:: https://github.com/rdegges/stormpath-export/raw/master/assets/box-sketch.jpg
+.. image:: https://github.com/rdegges/stormpath-export/raw/master/assets/box-sketch.png
     :alt: Box Sketch
 
 
