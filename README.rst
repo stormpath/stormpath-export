@@ -85,6 +85,10 @@ simply run:
 This will prompt you for some basic information, then store your credentials
 in the local file ``~/.stormy``.
 
+NOTE: If your tenant is not on https://api.stormpath.com/v1/, please enter
+the base url of your environment. For enterprise customers, that should be
+https://enterprise.stormpath.io/v1/
+
 Next, to initiate a backup job, you can run:
 
 .. code-block:: console
