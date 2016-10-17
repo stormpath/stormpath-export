@@ -166,6 +166,11 @@ Otherwise, `shoot us an email`_.
 Changelog
 ---------
 
+**0.1.1**: 10-17-2016
+
+- Supporting ``--base-url`` argument.
+- Making the tool Python 3 compatible.
+
 **0.1.0**: 03-16-2016
 
 - Supporting API key exports.
