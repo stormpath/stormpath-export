@@ -85,9 +85,9 @@ simply run:
 This will prompt you for some basic information, then store your credentials
 in the local file ``~/.stormy``.
 
-NOTE: If your tenant is not on https://api.stormpath.com/v1/, please enter
-the base url of your environment. For enterprise customers, that should be
-https://enterprise.stormpath.io/v1/
+NOTE: If you are using Stormpath Enterprise, please enter
+``https://enterprise.stormpath.io/v1`` when prompted for the Base URL.  This
+instructs the export tool to talk to the Stormpath Enterprise environment.
 
 Next, to initiate a backup job, you can run:
 
