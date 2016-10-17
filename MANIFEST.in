@@ -1,1 +1,1 @@
-include README.md setup.py UNLICENSE
+include README.rst setup.py UNLICENSE

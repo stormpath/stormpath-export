@@ -10,7 +10,7 @@ setup(
 
     # Basic package information:
     name = 'stormpath-export',
-    version = '0.0.9',
+    version = '0.1.0',
     scripts = ('stormpath-export', ),
 
     # Packaging options:
@@ -18,7 +18,7 @@ setup(
     include_package_data = True,
 
     # Package dependencies:
-    install_requires = ['docopt>=0.6.1', 'stormpath==2.0.7'],
+    install_requires = ['docopt>=0.6.2', 'stormpath>=2.2.0'],
 
     # Metadata for PyPI:
     author = 'Randall Degges',
@@ -28,6 +28,6 @@ setup(
     keywords = 'user authentication auth security api stormpath bcrypt utility',
     description = 'Easily export your Stormpath user data.',
     long_description = open(normpath(join(dirname(abspath(__file__)),
-        'README.md'))).read()
+        'README.rst'))).read()
 
 )
