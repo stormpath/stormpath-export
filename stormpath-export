@@ -7,7 +7,9 @@ Easily export your Stormpath (https://stormpath.com/) user data.
 
 Usage:
   stormpath-export configure
-  stormpath-export [(<location> | -l <location> | --location <location>)]
+  stormpath-export
+    [(<location> | -l <location> | --location <location>)]
+    [(-b <base_url> | --base-url <base_url>)]
   stormpath-export (-h | --help)
   stormpath-export --version
 
@@ -585,7 +587,7 @@ def configure(base_url=None):
 
             # Make the stormy configuration file only accessible to the current
             # user -- this makes the credentials a bit more safe.
-            chmod(CONFIG_FILE, 0600)
+            chmod(CONFIG_FILE, 0o600)
 
             finished = True
         except Error:
