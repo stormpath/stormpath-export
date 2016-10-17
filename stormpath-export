@@ -48,7 +48,7 @@ class StormpathExport(object):
                 'secret': credentials.get('stormpath_api_key_secret'),
             }, base_url=credentials.get('stormpath_base_url') or None)
         else:
-            print 'No API credentials found! Please run stormpath-export configure to set them up.'
+            print('No API credentials found! Please run stormpath-export configure to set them up.')
             exit(1)
 
     def get_custom_data(self, resource):
@@ -117,11 +117,11 @@ class StormpathExport(object):
 
     def export_tenants(self):
         """Export all tenant data for this Stormpath account."""
-        print '\n=== Exporting all tenant data...'
+        print('\n=== Exporting all tenant data...')
 
         tenant = dict(self.client.tenant)
 
-        print '- Exporting tenant:', tenant['name']
+        print('- Exporting tenant:', tenant['name'])
 
         json = {
             'id': self.get_id(tenant),
@@ -137,14 +137,14 @@ class StormpathExport(object):
 
         self.write('%s/%s/meta' % (self.location, json['id']), json)
 
-        print '=== Done!\n'
+        print('=== Done!\n')
 
     def export_applications(self):
         """Export all application data for this Stormpath account."""
-        print '\n=== Exporting all application data...'
+        print('\n=== Exporting all application data...')
 
         for application in self.client.applications:
-            print '- Exporting application:', application.name
+            print('- Exporting application:', application.name)
 
             json = {
                 'id': self.get_id(application),
@@ -202,14 +202,14 @@ class StormpathExport(object):
             tenant = self.get_id(application.tenant)
             self.write('%s/%s/applications/%s' % (self.location, tenant, json['id']), json)
 
-        print '=== Done!\n'
+        print('=== Done!\n')
 
     def export_directories(self):
         """Export all directory data for this Stormpath account."""
-        print '=== Exporting all directory data...'
+        print('=== Exporting all directory data...')
 
         for directory in self.client.directories:
-            print '- Exporting directory:', directory.name
+            print('- Exporting directory:', directory.name)
 
             json = {
                 'id': self.get_id(directory),
@@ -356,14 +356,14 @@ class StormpathExport(object):
             tenant = self.get_id(directory.tenant)
             self.write('%s/%s/directories/%s' % (self.location, tenant, json['id']), json)
 
-        print '=== Done!\n'
+        print('=== Done!\n')
 
     def export_organizations(self):
         """Export all organization data for this Stormpath account."""
-        print '\n=== Exporting all organization data...'
+        print('\n=== Exporting all organization data...')
 
         for organization in self.client.organizations:
-            print '- Exporting organizations:', organization.name
+            print('- Exporting organizations:', organization.name)
 
             json = {
                 'id': self.get_id(organization),
@@ -421,14 +421,14 @@ class StormpathExport(object):
             tenant = self.get_id(organization.tenant)
             self.write('%s/%s/organizations/%s' % (self.location, tenant, json['id']), json)
 
-        print '=== Done!\n'
+        print('=== Done!\n')
 
     def export_groups(self):
         """Export all group data for this Stormpath account."""
-        print '=== Exporting all group data...'
+        print('=== Exporting all group data...')
 
         for group in self.client.tenant.groups:
-            print '- Exporting group:', group.name
+            print('- Exporting group:', group.name)
 
             json = {
                 'id': self.get_id(group),
@@ -469,14 +469,14 @@ class StormpathExport(object):
             tenant = self.get_id(self.client.tenant)
             self.write('%s/%s/groups/%s' % (self.location, tenant, json['id']), json)
 
-        print '=== Done!\n'
+        print('=== Done!\n')
 
     def export_accounts(self):
         """Export all account data for this Stormpath account."""
-        print '=== Exporting all account data...'
+        print('=== Exporting all account data...')
 
         for account in self.client.tenant.accounts:
-            print '- Exporting account:', account.email
+            print('- Exporting account:', account.email)
 
             json = {
                 'id': self.get_id(account),
@@ -527,7 +527,7 @@ class StormpathExport(object):
             tenant = self.get_id(self.client.tenant)
             self.write('%s/%s/accounts/%s' % (self.location, tenant, json['id']), json)
 
-        print '=== Done!\n'
+        print('=== Done!\n')
 
     def export(self, location=None):
         """
@@ -552,8 +552,8 @@ def configure(base_url=None):
     This will store the user's API credentials in: ~/.stormy, and ensure the
     API credentials specified actually work.
     """
-    print 'Initializing `stormpath-export`...\n'
-    print "To get started, we'll need to get your Stormpath API credentials. Don't have a Stormpath account? Go get one! https://stormpath.com"
+    print('Initializing `stormpath-export`...\n')
+    print("To get started, we'll need to get your Stormpath API credentials.  Don't have a Stormpath account? Go get one! https://stormpath.com")
 
     finished = False
     while not finished:
@@ -561,8 +561,8 @@ def configure(base_url=None):
         api_key_secret = raw_input('Enter your API Key Secret: ').strip()
         base_url = raw_input('Enter your Base URL (not required): ').strip()
         if not (api_key_id or api_key_secret):
-            print '\nNot sure how to find your Stormpath API credentials?'
-            print 'Log into your Stormpath account, then visit your dashboard and use the "Manage Existing Keys" link.\n'
+            print('\nNot sure how to find your Stormpath API credentials?')
+            print('Log into your Stormpath account, then visit your dashboard and use the "Manage Existing Keys" link.\n')
             continue
 
         # Validate the API credentials.
@@ -572,9 +572,9 @@ def configure(base_url=None):
         }, base_url=base_url or None)
         try:
             client.applications
-            print '\nSuccessfully initialized stormy!'
-            print 'Your API credentials are stored in the file:', CONFIG_FILE, '\n'
-            print 'Run stormpath-export for usage information.'
+            print('\nSuccessfully initialized stormy!')
+            print('Your API credentials are stored in the file:', CONFIG_FILE, '\n')
+            print('Run stormpath-export for usage information.')
 
             with open(CONFIG_FILE, 'wb') as stormycfg:
                 stormycfg.write(dumps({
@@ -589,7 +589,7 @@ def configure(base_url=None):
 
             finished = True
         except Error:
-            print '\nYour API credentials are not working, please verify they are correct, then try again.\n'
+            print('\nYour API credentials are not working, please verify they are correct, then try again.\n')
 
 
 def main():
