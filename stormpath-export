@@ -578,7 +578,7 @@ def configure(base_url=None):
             print('Your API credentials are stored in the file:', CONFIG_FILE, '\n')
             print('Run stormpath-export for usage information.')
 
-            with open(CONFIG_FILE, 'wb') as stormycfg:
+            with open(CONFIG_FILE, 'w') as stormycfg:
                 stormycfg.write(dumps({
                     'stormpath_api_key_id': api_key_id,
                     'stormpath_api_key_secret': api_key_secret,
