@@ -20,7 +20,7 @@ Options:
 Written by Randall Degges <http://www.rdegges.com/>.
 """
 
-
+from builtins import input
 from json import dumps, loads
 from os import chmod, getcwd, makedirs
 from os.path import dirname, exists, expanduser
@@ -559,9 +559,9 @@ def configure(base_url=None):
 
     finished = False
     while not finished:
-        api_key_id = raw_input('Enter your API Key ID: ').strip()
-        api_key_secret = raw_input('Enter your API Key Secret: ').strip()
-        base_url = raw_input('Enter your Base URL (not required): ').strip()
+        api_key_id = input('Enter your API Key ID: ').strip()
+        api_key_secret = input('Enter your API Key Secret: ').strip()
+        base_url = input('Enter your Base URL (optional): ').strip()
         if not (api_key_id or api_key_secret):
             print('\nNot sure how to find your Stormpath API credentials?')
             print('Log into your Stormpath account, then visit your dashboard and use the "Manage Existing Keys" link.\n')
