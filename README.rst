@@ -166,6 +166,10 @@ Otherwise, `shoot us an email`_.
 Changelog
 ---------
 
+**0.1.2**: 12-27-2016
+
+- Importing missing dependency.
+
 **0.1.1**: 10-17-2016
 
 - Supporting ``--base-url`` argument.
