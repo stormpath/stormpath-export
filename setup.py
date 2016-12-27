@@ -18,7 +18,7 @@ setup(
     include_package_data = True,
 
     # Package dependencies:
-    install_requires = ['docopt>=0.6.2', 'stormpath>=2.2.0'],
+    install_requires = ['docopt>=0.6.2', 'future>=0.16.0', 'stormpath>=2.2.0'],
 
     # Metadata for PyPI:
     author = 'Randall Degges',
